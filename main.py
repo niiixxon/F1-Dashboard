@@ -89,7 +89,7 @@ if isinstance(dev_value, list):
     dev_value = dev_value[0]
 
 DEV_MODE = dev_value == "gilfoylehyde"
-st.write("DEV_MODE check:", DEV_MODE)
+#st.write("DEV_MODE check:", DEV_MODE)
 
 if DEV_MODE:
     if st.button("Refresh Data Cache"):
@@ -100,8 +100,6 @@ if DEV_MODE:
         laps_raw = fetch_laps(session_key)
         laps = clean_laps(laps_raw)
         st.success("Laps data refreshed!")
-
-
 
 
 # --- Step 3: Fetch and Clean Laps ---
