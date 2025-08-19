@@ -81,10 +81,26 @@ session_key = next(s["session_key"] for s in sessions if s["session_name"] == se
 
 
 # --- Step 3b: Developer Mode (fully hidden, via URL) ---
+<<<<<<< HEAD
 # --- Step 3b: Developer Mode (fully hidden, via URL) ---
 dev_value = st.experimental_get_query_params().get("dev", [""])[0]
 DEV_MODE = dev_value == "gilfoylehyde"
+=======
+# --- Step 3b: Developer Mode (hidden, via URL) ---
+import os
 
+# Get the secret from environment
+dev_secret = os.getenv("DEV_SECRET", "no_secret_set")
+
+# Read query parameter from URL
+dev_value = st.experimental_get_query_params().get("dev", [""])[0]
+>>>>>>> 8609fd5 (dev6)
+
+# Check if dev mode should be active
+DEV_MODE = dev_value == dev_secret
+
+
+# Developer-only buttons
 if DEV_MODE:
     st.write("🔧 Developer Mode Enabled")
 
