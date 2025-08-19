@@ -85,10 +85,6 @@ session_key = next(s["session_key"] for s in sessions if s["session_name"] == se
 dev_value = st.experimental_get_query_params().get("dev", [""])[0]
 DEV_MODE = dev_value == "gilfoylehyde"
 
-# Debug info (optional, remove in production)
-st.write("Query Params:", st.experimental_get_query_params())
-st.write("DEV_MODE check:", DEV_MODE)
-
 if DEV_MODE:
     st.write("🔧 Developer Mode Enabled")
 
