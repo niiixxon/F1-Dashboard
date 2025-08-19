@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import streamlit as st
 import colorsys
+import time
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
@@ -314,3 +315,15 @@ for i, (sector, name) in enumerate(zip(sectors, sector_names)):
 
 
 
+CACHE_DIR = "data_cache"
+
+def get_last_update_time():
+    if not os.path.exists(CACHE_DIR):
+        return "Never"
+    files = [os.path.join(CACHE_DIR, f) for f in os.listdir(CACHE_DIR)]
+    if not files:
+        return "Never"
+    last_time = max(os.path.getmtime(f) for f in files)
+    return st.write(f"Last cache update: {time.ctime(last_time)}")
+
+get_last_update_time()
