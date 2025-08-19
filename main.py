@@ -27,10 +27,7 @@ from app.visualizer.degradation_charts import plot_tyre_degradation
 
 # --- Streamlit Page Setup ---
 st.set_page_config(page_title="OpenF1 Strategy Dashboard", layout="wide")
-# Developer key for hidden functionality
-DEV_MODE = st.sidebar.text_input("Developer Key", type="password") == "gilfoylehyde"
-
-st.title("F1 Dashboard — Interactive Version")
+st.title("F1 Dashboard — Interactive Version") 
 
 # --- Step 1: Select Year ---
 possible_years = [2025, 2024, 2023, 2022]
@@ -39,10 +36,10 @@ available_years = []
 for y in possible_years:
     try:
         meetings_for_year = fetch_meetings(y)
-        if meetings_for_year:  # Only include years with meetings
+        if meetings_for_year:
             available_years.append(y)
     except:
-        pass  # Ignore errors for that year
+        pass
 
 if not available_years:
     st.error("No meetings available for any year.")
@@ -61,35 +58,12 @@ if not meetings:
     st.warning("No meetings found for this year.")
     st.stop()
 
-# --- Developer Tools (Hidden) ---
-DEV_MODE = False
-show_dev = st.sidebar.checkbox("Show Developer Tools")  # minimal sidebar toggle
-
-if show_dev:
-    dev_key = st.sidebar.text_input("Enter Developer Key", type="password")
-    if dev_key == "my_secret_key":  # replace with your own secret
-        DEV_MODE = True
-
-if DEV_MODE:
-    st.markdown("---")
-    st.subheader("Developer Tools")
-
-    if st.button("Refresh Data Cache"):
-        clear_cache_files()
-        st.experimental_rerun()
-
-    if st.button("Refresh Laps Data"):
-        laps_raw = fetch_laps(session_key)
-        laps = clean_laps(laps_raw)
-        st.success("Laps data refreshed!")
-
-
-
+# --- Step 2: Select Meeting ---
 meeting_names = [m["meeting_name"] for m in meetings]
 selected_meeting = st.selectbox("Select Race/Meeting", meeting_names)
 meeting_key = next(m["meeting_key"] for m in meetings if m["meeting_name"] == selected_meeting)
 
-# --- Step 2: Select Session ---
+# --- Step 3: Select Session ---
 try:
     with st.spinner("Fetching sessions..."):
         sessions = fetch_sessions(meeting_key)
@@ -104,6 +78,31 @@ if not sessions:
 session_names = [s["session_name"] for s in sessions]
 selected_session = st.selectbox("Select Session", session_names)
 session_key = next(s["session_key"] for s in sessions if s["session_name"] == selected_session)
+
+
+# --- Step 3b: Developer Mode (fully hidden, via URL) ---
+# --- Step 3b: Developer Mode (fully hidden, via URL) ---# --- Step 3b: Developer Mode (fully hidden, via URL) ---
+query_params = st.query_params  # <- make sure this line is present
+
+dev_value = query_params.get("dev", "")
+if isinstance(dev_value, list):
+    dev_value = dev_value[0]
+
+DEV_MODE = dev_value == "gilfoylehyde"
+st.write("DEV_MODE check:", DEV_MODE)
+
+if DEV_MODE:
+    if st.button("Refresh Data Cache"):
+        clear_cache_files()
+        st.experimental_rerun()
+
+    if st.button("Refresh Laps Data"):
+        laps_raw = fetch_laps(session_key)
+        laps = clean_laps(laps_raw)
+        st.success("Laps data refreshed!")
+
+
+
 
 # --- Step 3: Fetch and Clean Laps ---
 try:
