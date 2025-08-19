@@ -85,7 +85,7 @@ session_key = next(s["session_key"] for s in sessions if s["session_name"] == se
 import os
 
 # Get the secret from environment
-dev_secret = os.getenv("DEV_SECRET", "no_secret_set")
+dev_secret = st.secrets["DEV_SECRET"]
 
 # Read query parameter from URL
 dev_value = st.experimental_get_query_params().get("dev", [""])[0]
