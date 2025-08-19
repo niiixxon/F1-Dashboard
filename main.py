@@ -61,8 +61,18 @@ if not meetings:
     st.warning("No meetings found for this year.")
     st.stop()
 
+# --- Developer Tools (Hidden) ---
+DEV_MODE = False
+show_dev = st.sidebar.checkbox("Show Developer Tools")  # minimal sidebar toggle
+
+if show_dev:
+    dev_key = st.sidebar.text_input("Enter Developer Key", type="password")
+    if dev_key == "my_secret_key":  # replace with your own secret
+        DEV_MODE = True
+
 if DEV_MODE:
-    st.markdown("### Developer Tools (Hidden)")
+    st.markdown("---")
+    st.subheader("Developer Tools")
 
     if st.button("Refresh Data Cache"):
         clear_cache_files()
@@ -71,7 +81,8 @@ if DEV_MODE:
     if st.button("Refresh Laps Data"):
         laps_raw = fetch_laps(session_key)
         laps = clean_laps(laps_raw)
-        st.success("Laps data refreshed.")
+        st.success("Laps data refreshed!")
+
 
 
 meeting_names = [m["meeting_name"] for m in meetings]
