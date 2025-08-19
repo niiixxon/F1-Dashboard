@@ -81,25 +81,27 @@ session_key = next(s["session_key"] for s in sessions if s["session_name"] == se
 
 
 # --- Step 3b: Developer Mode (fully hidden, via URL) ---
-# --- Step 3b: Developer Mode (fully hidden, via URL) ---# --- Step 3b: Developer Mode (fully hidden, via URL) ---
-query_params = st.query_params  # <- make sure this line is present
-
-dev_value = query_params.get("dev", "")
-if isinstance(dev_value, list):
-    dev_value = dev_value[0]
-
+# --- Step 3b: Developer Mode (fully hidden, via URL) ---
+dev_value = st.experimental_get_query_params().get("dev", [""])[0]
 DEV_MODE = dev_value == "gilfoylehyde"
-#st.write("DEV_MODE check:", DEV_MODE)
+
+# Debug info (optional, remove in production)
+st.write("Query Params:", st.experimental_get_query_params())
+st.write("DEV_MODE check:", DEV_MODE)
 
 if DEV_MODE:
+    st.write("🔧 Developer Mode Enabled")
+
     if st.button("Refresh Data Cache"):
         clear_cache_files()
+        st.success("Cache cleared!")
         st.experimental_rerun()
 
     if st.button("Refresh Laps Data"):
         laps_raw = fetch_laps(session_key)
         laps = clean_laps(laps_raw)
         st.success("Laps data refreshed!")
+
 
 
 # --- Step 3: Fetch and Clean Laps ---
