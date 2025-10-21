@@ -47,23 +47,9 @@ if not available_years:
 
 year = st.selectbox("Select Year", available_years, index=0)
 
-# --- Cache Refresh Controls ---
-st.sidebar.markdown("### 🧠 Data Controls")
-
-force_refresh = st.sidebar.checkbox("Force Refresh Meetings/Sessions", value=False)
-
-if st.sidebar.button("🔄 Refresh Cache Now"):
-    clear_cache_files()
-    st.success("Cache cleared successfully! Data will be re-fetched.")
-    st.experimental_rerun()
-
-# --- Step 2: Fetch Meetings (with Refresh Support) ---
 try:
     with st.spinner("Fetching meetings..."):
-        meetings = fetch_meetings(year if not force_refresh else None)
-        if force_refresh:
-            clear_cache_files()
-            meetings = fetch_meetings(year)
+        meetings = fetch_meetings(year)
 except Exception as e:
     st.error(f"Error fetching meetings: {e}")
     st.stop()
@@ -72,17 +58,15 @@ if not meetings:
     st.warning("No meetings found for this year.")
     st.stop()
 
+# --- Step 2: Select Meeting ---
 meeting_names = [m["meeting_name"] for m in meetings]
 selected_meeting = st.selectbox("Select Race/Meeting", meeting_names)
 meeting_key = next(m["meeting_key"] for m in meetings if m["meeting_name"] == selected_meeting)
 
-# --- Step 3: Fetch Sessions ---
+# --- Step 3: Select Session ---
 try:
     with st.spinner("Fetching sessions..."):
         sessions = fetch_sessions(meeting_key)
-        if force_refresh:
-            clear_cache_files()
-            sessions = fetch_sessions(meeting_key)
 except Exception as e:
     st.error(f"Error fetching sessions: {e}")
     st.stop()
@@ -94,7 +78,6 @@ if not sessions:
 session_names = [s["session_name"] for s in sessions]
 selected_session = st.selectbox("Select Session", session_names)
 session_key = next(s["session_key"] for s in sessions if s["session_name"] == selected_session)
-
 
 
 # --- Step 3b: Developer Mode (fully hidden, via URL) ---
